@@ -1,0 +1,32 @@
+
+<h1>
+    EMPATHY SIGN-UP
+</h1>
+
+<form action="/create_user" enctype="multipart/form-data" method="post">
+    {% csrf_token %}
+    <table >
+        <tr align = "left">
+            <th>Name</th>
+            <th><input type="text" name = "name" id="name" value="{{ name }}"></th>
+        </tr>
+        <tr align = "left">
+            <th>Roll Number</th>
+            <th><input type="text" name = "roll" id="roll"></th>
+        </tr >
+        <tr align = "left">
+            <th>Username</th>
+            <th><input type="text" name = "username" id="username"></th>
+        </tr>
+        <tr align = "left">
+            <th>Password</th>
+            <th><input type="text" name = "password" id="password"></th>
+        </tr>
+    </table>
+
+    <br>
+    <br>
+    Click to upload Pic<input type="file" name="pic" id = "pic" value = "Pic ">
+    <input type="submit" value = "Click Me"> 
+   
+</form>

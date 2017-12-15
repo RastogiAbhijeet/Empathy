@@ -1,0 +1,15 @@
+<h1>
+    Empathy
+</h1>
+<p>{{message}}</p>
+<form action="/validate" method="post">
+    {% csrf_token %}
+    Username : <input type="text" name="username" id="username"><br/>
+    Password : <input type="password" name="pass" id="pass">
+    <input type="submit">
+</form>
+<form action="/signup">
+    <input type="submit">
+</form>
+
+
