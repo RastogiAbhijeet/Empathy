@@ -7,3 +7,9 @@ class LoginTable(models.Model):
 
     def __str__(self):
         return self.username
+
+# class NewsFeed(models.Model):
+#     ngo_name = models.CharField(max_length = 300)
+#     title = models.CharField(max_length = 300)
+#     date = models.DateField()
+#     Description = models.CharF
