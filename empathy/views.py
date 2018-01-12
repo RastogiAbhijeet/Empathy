@@ -3,7 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 import json 
-from .models import LoginTable, StudentProfile
+from .models import LoginTable, StudentProfile, EventTable
 import mimetypes
 from django.http import StreamingHttpResponse
 from wsgiref.util import FileWrapper
@@ -17,7 +17,7 @@ from django.core.exceptions import ObjectDoesNotExist
 def validate(request):
     # Login Validation - 
     #     Checkes whether the received username and password are valid or not
-    
+    # responseText = ""
     js = json.loads(request.body.decode('utf-8'))
     userName = js['Username'] 
     passWord = js['Password']
@@ -28,15 +28,25 @@ def validate(request):
         dbObj = LoginTable.objects.filter(username = userName)
         print(dbObj)
         try:
+            dic = {}
             dbObj.get(password = str(passWord))
-            # print(db.role)
-            dic = {'message':'He he','name':'Abhijeet', 'roll_no':'CO15302', 'role':'faculty','gender':'male'}
+            for i in dbObj:
+                print(i.role)
 
+                if str(i.role) == "student":
+                    studentObj = StudentProfile.objects.get(roll_no = passWord)
+                    dic = {'name':studentObj.name, 'roll_no':studentObj.roll_no, 'role':studentObj.role,'gender':studentObj.gender}
+                else:
+                    dic = {'role':str(i.role)}
+            print(dic)
             ls = [dic]
             responseText = str(ls)[1:-1]
 
         except ObjectDoesNotExist:
             responseText = 'Check either username or password is incorrect'
+            # return HttpResponse(responseText, content_type="text/plain")
+        except Exception as e:
+            print(e)
 
         return HttpResponse(responseText, content_type="text/plain")
     except:     
@@ -65,8 +75,10 @@ def register(request):
         dbObj.year = str(js["year"])
         dbObj.email = str(js["email"])
         dbObj.mobile = str(js["mobile"])
-        djObj.role = str(js["role"])
+        dbObj.role = str(js["role"])
+        dbObj.gender = str(js["gender"])
         dbObj.save()
+
 
         loginObj.password =str(js["roll_no"])
         loginObj.username = str(js["roll_no"])
@@ -88,8 +100,62 @@ def output_pdf(request):
 
     return response
 
-
+@csrf_exempt
 def event_register(request):
-    pass
+    
+    try:
+        # print("Hello")
+        js = json.loads(request.body.decode("utf-8"))
+        jsArray = js['event']
+        print(jsArray);
+        dbObj = EventTable.objects.filter(roll_no = str(js["roll_no"]))
+
+        list_registered = []
+        for x in dbObj:
+            list_registered.append(x)
+        
+        if len(dbObj)+len(jsArray) > 5:
+            response_str = "Already have registered for events"
+            for i in dbObj:
+                response_str = response_str + "   " +str(i.event)
+
+            return HttpResponse(response_str, content_type="text/plain")
+        else:
+            
+            for i in jsArray:
+                if i not in list_registered:
+                    db = EventTable()
+                    print(i)
+                    db.roll_no = js["roll_no"]
+                    db.event = i
+                    db.save()
+
+            return HttpResponse("Check profile to see the registered Events", content_type="text/plain")
+
+    except Exception as e:
+        print(e)
+
+    return HttpResponse("Try Again after some time", content_type="text/plain")
     # Js Data : {"name":"abhijeet rastogi","roll_no", Event:["event1","event2, "event3", "event4", "event5"]}
+
+@csrf_exempt
+def event_push(request):
+    
+    try:
+        db = EventTable.objects.filter(roll_no=request.body.decode("utf-8"))
+
+        event_list = [x.event for x in db]
+        position_list = [x.position for x in db]
+
+        print(event_list)
+        print(position_list)
+
+
+        dic = {"event":event_list, "position":position_list}
+        ls = [dic]
+        responseText = str(ls)[1:-1]
+
+        return HttpResponse(responseText, content_type = "text/plain")
+    except Exception as e:
+        print(e)
 
