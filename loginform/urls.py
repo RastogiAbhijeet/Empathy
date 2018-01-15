@@ -7,5 +7,6 @@ urlpatterns= [
     url(r'^$', views.login, name='login'),
     url(r'validate$', views.validate, name='validate'),
     url(r'signup$', views.signup, name='signup'),
-    url(r'create_user$', views.dbentry, name = 'dbentry')
+    url(r'create_user$', views.dbentry, name = 'dbentry'),
+    
 ]

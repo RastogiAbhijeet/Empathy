@@ -159,3 +159,32 @@ def event_push(request):
     except Exception as e:
         print(e)
 
+@csrf_exempt
+def sendnames(request):
+    
+    js = json.loads(request.body.decode("utf-8"))
+    db = EventTable.objects.filter(event = js["event"])
+    
+    responseArray = []
+
+    for i in db:
+        studentDic = {}
+    
+        dbObj = StudentProfile.objects.filter(roll_no = str(i.roll_no))
+        if dbObj[0].gender == js["gender"]:
+            studentDic['roll_no'] = str(dbObj[0].roll_no)
+            studentDic['name'] = str(dbObj[0].name)
+            studentDic['year'] = str(dbObj[0].year)
+            studentDic['branch'] = str(dbObj[0].branch)
+            studentDic['position'] = i.position
+            responseArray.append(studentDic)
+
+    dic = {"student":responseArray}
+    ls = [dic]
+    dataPacket = str(ls)[1:-1]
+    print(dataPacket)
+
+    return HttpResponse(dataPacket, content_type = "text/plain")
+        
+    
+

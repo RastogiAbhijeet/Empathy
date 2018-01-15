@@ -37,6 +37,7 @@ def signup(request):
     return render(request, 'loginform/signup.html', {})
     
 def dbentry(request):
+    
     try:
         User.objects.get(username = request.POST['username'])
         return HttpResponse("Record Not Created")
@@ -57,3 +58,4 @@ def dbentry(request):
             
         q.save()
         return HttpResponseRedirect(reverse("loginform:login"))
+
