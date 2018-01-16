@@ -186,5 +186,13 @@ def sendnames(request):
 
     return HttpResponse(dataPacket, content_type = "text/plain")
         
+@csrf_exempt
+def updateShortList(request):
+    
+    js = json.loads(request.body.decode("utf-8"))
+    print(js)
+    return HttpResponse("Success", content_type = "text/plain")
+
+
     
 
