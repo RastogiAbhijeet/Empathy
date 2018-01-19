@@ -11,6 +11,8 @@ import os
 
 from django.core.exceptions import ObjectDoesNotExist
 
+from django.core.mail import EmailMessage
+
 # Create your views here. 
 
 @csrf_exempt 
@@ -35,7 +37,7 @@ def validate(request):
 
                 if str(i.role) == "student":
                     studentObj = StudentProfile.objects.get(roll_no = passWord)
-                    dic = {'name':studentObj.name, 'roll_no':studentObj.roll_no, 'role':studentObj.role,'gender':studentObj.gender}
+                    dic = {'name':studentObj.name, 'roll_no':studentObj.roll_no, 'role':studentObj.role,'gender':studentObj.gender,'branch':studentObj.branch,'CCET':studentObj.college}
                 else:
                     dic = {'role':str(i.role)}
             print(dic)
@@ -77,6 +79,7 @@ def register(request):
         dbObj.mobile = str(js["mobile"])
         dbObj.role = str(js["role"])
         dbObj.gender = str(js["gender"])
+        dbObj.college = str(js["college"])
         dbObj.save()
 
 
@@ -177,6 +180,7 @@ def sendnames(request):
             studentDic['year'] = str(dbObj[0].year)
             studentDic['branch'] = str(dbObj[0].branch)
             studentDic['position'] = i.position
+            studentDic['college'] = str(dbObj[0].college)
             responseArray.append(studentDic)
 
     dic = {"student":responseArray}
@@ -188,11 +192,25 @@ def sendnames(request):
         
 @csrf_exempt
 def updateShortList(request):
-    
-    js = json.loads(request.body.decode("utf-8"))
-    print(js)
+    requestData = json.loads((request.body.decode('utf-8')))
+    for dataResource in requestData:
+        EventTable.objects.filter(event = dataResource['event'], roll_no = dataResource['roll_no']).update(position = dataResource['position'])
     return HttpResponse("Success", content_type = "text/plain")
 
+@csrf_exempt
+def updatePositionList(request):
+    requestData = json.loads((request.body.decode('utf-8')))
+    for dataResource in requestData:
+        EventTable.objects.filter(event = dataResource['event'], roll_no = dataResource['roll_no'], position = dataResource['qualified']).update(position = dataResource['position'])
+    return HttpResponse("Success", content_type = "text/plain")
+
+@csrf_exempt
+def sendMail(request):
+    
+    email = request.body.decode("utf-8")
+    print(email)
+    obj = EmailMessage("Athletic Meet Registeration","666666", to=[email])
+    return HttpResponse("666666", content_type = "text/plain")
 
     
 

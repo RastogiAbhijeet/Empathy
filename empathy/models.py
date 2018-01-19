@@ -20,6 +20,7 @@ class StudentProfile(models.Model):
     email = models.CharField(max_length= 40, default = "xyz", blank=True, null = True)
     mobile = models.CharField(max_length = 10, default = "xyz", blank=True, null = True)
     gender = models.CharField(max_length = 10, default = "xyz", blank=True, null = True)
+    college = models.CharField(max_length = 10, default = "Default", blank=True, null = True)
 
    
     def __str__(self):

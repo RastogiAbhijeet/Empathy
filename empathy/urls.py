@@ -11,5 +11,6 @@ urlpatterns = [
     url(r'^event_profile/$', views.event_push,name="event_push"),
     url(r'^getnames$', views.sendnames, name = 'sendnames'),
     url(r'^shortlist$',views.updateShortList, name = "updateShortList"),
-    url(r'^ruom$',views.updateShortList, name = "updateShortList"),
+    url(r'^position$', views.updatePositionList, name = 'updatePositionList'),
+    url(r'^sendVerification/$', views.sendMail, name="sendMail")
 ]
