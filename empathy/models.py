@@ -32,6 +32,9 @@ class EventTable(models.Model):
     position = models.CharField(max_length = 10, null = True, blank = True, default = "Not Played Yet")
     attribute = models.CharField(max_length = 40, null = True, blank = True)
 
+class RollNo(models.Model):
+    roll_no = models.CharField(max_length = 8, primary_key = True)
+    name = models.CharField(max_length = 300)
         
 # Select * where event = "xyz" from StudentProfile -- This is the filter for Faculty Searching events
 

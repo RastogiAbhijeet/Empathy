@@ -16,7 +16,7 @@ def login(request):
                 'message':"Empathy - Our goal is to unite this world",
             }
     # try:
-    return render(request,'loginform/login.html',context)
+    return render(request,'loginform/Untitled-1.html',context)
     # except:
     #     return HttpResponse("Page Not Found Error 404")
 
@@ -57,5 +57,5 @@ def dbentry(request):
             uploaded_file_url = fs.url(filename)
             
         q.save()
-        return HttpResponseRedirect(reverse("loginform:login"))
+        return HttpResponseRedirect(reverse("loginform:Untitled-1"))
 

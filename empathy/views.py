@@ -3,11 +3,13 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 import json 
-from .models import LoginTable, StudentProfile, EventTable
+import csv
+from .models import LoginTable, StudentProfile, EventTable, RollNo
 import mimetypes
 from django.http import StreamingHttpResponse
 from wsgiref.util import FileWrapper
 import os
+
 
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -45,7 +47,7 @@ def validate(request):
             responseText = str(ls)[1:-1]
 
         except ObjectDoesNotExist:
-            responseText = 'Check either username or password is incorrect'
+            responseText = ''
             # return HttpResponse(responseText, content_type="text/plain")
         except Exception as e:
             print(e)
@@ -68,27 +70,42 @@ def register(request):
 
     except ObjectDoesNotExist:
 
-        print(ObjectDoesNotExist)
-        print("Hellp")
-        dbObj.name = str(js["name"])
-        dbObj.roll_no = str(js["roll_no"])
-        dbObj.branch = str(js["branch"])
-        dbObj.semester = str(js["semester"])
-        dbObj.year = str(js["year"])
-        dbObj.email = str(js["email"])
-        dbObj.mobile = str(js["mobile"])
-        dbObj.role = str(js["role"])
-        dbObj.gender = str(js["gender"])
-        dbObj.college = str(js["college"])
-        dbObj.save()
+        if checkValidRollNo((str(js["roll_no"]).upper())):
+            print(ObjectDoesNotExist)
+            print("Hell")
+            dbRoll = RollNo.objects.filter(roll_no=str(js['roll_no']).upper())
+            name = dbRoll[0].name
+            dbObj.name = str(name)
+            dbObj.roll_no = str(js["roll_no"])
+            dbObj.branch = str(js["branch"])
+            dbObj.semester = str(js["semester"])
+            dbObj.year = str(js["year"])
+            dbObj.email = str(js["email"])
+            dbObj.mobile = str(js["mobile"])
+            dbObj.role = str(js["role"])
+            dbObj.gender = str(js["gender"])
+            dbObj.college = str(js["college"])
+            dbObj.save()
 
+            loginObj.password =str(js["roll_no"])
+            loginObj.username = str(js["roll_no"])
+            loginObj.role = str(js["role"])
+            loginObj.save()
+            
+            return HttpResponse("success", content_type= "text/plain")
+        else :
+            return HttpResponse("Can't find Roll No in the records", content_type = "text/plain")
 
-        loginObj.password =str(js["roll_no"])
-        loginObj.username = str(js["roll_no"])
-        loginObj.role = str(js["role"])
-        loginObj.save()
+def checkValidRollNo(roll):
+    
+    print("In Validation Shitt !! ")
+    try:
+        db = RollNo.objects.get(roll_no = roll)
+        return True
+    except:
+        print("Hello")
+        return False
 
-        return HttpResponse("success", content_type= "text/plain")
         
 # Here's How we are going to send the PDF.
 def output_pdf(request):
@@ -210,7 +227,65 @@ def sendMail(request):
     email = request.body.decode("utf-8")
     print(email)
     obj = EmailMessage("Athletic Meet Registeration","666666", to=[email])
+    obj.send()
     return HttpResponse("666666", content_type = "text/plain")
 
+@csrf_exempt
+def reportGeneration(request):
     
+    gender_mask = json.loads(request.body.decode('utf-8'))
+    roll_no = []
 
+    for gender in gender_mask['gender']:
+        db = StudentProfile.objects.filter(gender = gender)
+        for dbInstance in db:
+            roll_no.append(dbInstance.roll_no)
+        
+    finalRolls = []
+    for roll in roll_no:
+        dbEvent = EventTable.objects.filter(roll_no = roll)
+        for event in dbEvent:
+            if str(event.position) in gender_mask['position']:
+                db = StudentProfile.objects.filter(roll_no= roll)
+                dic = {"name": str(db[0].name),
+                    "roll_no":str(db[0].roll_no), 
+                    "branch":str(db[0].branch),
+                    "year":str(db[0].year),
+                    "event":str(event.event),
+                    "position":str(event.position)
+                }
+                finalRolls.append(dic)
+
+    employ_data = open('./media/EmployData.csv', 'a')
+
+    # create the csv writer object
+
+    csvwriter = csv.writer(employ_data)
+
+    count = 0
+    for x in finalRolls:
+        js= json.dumps(x)
+        jsoe = json.loads(js)
+        print(jsoe.keys()) 
+        if(count == 0):
+            header = jsoe.keys()
+            csvwriter.writerow(header)
+            count+=1
+        csvwriter.writerow(jsoe.values())
+
+    employ_data.close()
+
+    return HttpResponse(str(finalRolls)[1:-1],content_type="text/plain")
+
+
+def loadCsv(request):
+    file = open("./media/CollegeCutList.csv", "r")
+    reader = csv.reader(file)
+    for i in reader:
+        db = RollNo()
+        if(i[0] != 0):
+            db.roll_no = i[0]
+            db.name = i[1]
+        db.save()
+    
+    return HttpResponse("Data Successfully Loaded")

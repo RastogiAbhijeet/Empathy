@@ -12,5 +12,7 @@ urlpatterns = [
     url(r'^getnames$', views.sendnames, name = 'sendnames'),
     url(r'^shortlist$',views.updateShortList, name = "updateShortList"),
     url(r'^position$', views.updatePositionList, name = 'updatePositionList'),
-    url(r'^sendVerification/$', views.sendMail, name="sendMail")
+    url(r'^sendVerification/$', views.sendMail, name="sendMail"),
+    url(r'^xls_generation/$', views.reportGeneration, name="reportGeneration"),
+    url(r'^loadCsv/$', views.loadCsv, name="loadCsv"),
 ]
