@@ -242,10 +242,11 @@ def sendMail(request):
     
     email = request.body.decode("utf-8")
     print(email)
-    obj = EmailMessage("Athletic Meet Registeration","666666", to=[email])
+    pin = random.randint(100000, 999999)
+    obj = EmailMessage("Athletic Meet Registeration",pin, to=[email])
     obj.send()
 
-    pin = random.randint(100000, 999999)
+    
 
     return HttpResponse(str(pin), content_type = "text/plain")
 
