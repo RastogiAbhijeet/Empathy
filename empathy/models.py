@@ -21,7 +21,9 @@ class StudentProfile(models.Model):
     mobile = models.CharField(max_length = 10, default = "xyz", blank=True, null = True)
     gender = models.CharField(max_length = 10, default = "xyz", blank=True, null = True)
     college = models.CharField(max_length = 10, default = "Default", blank=True, null = True)
-
+    event_type = models.CharField(max_length = 10, default = "Athletic Meet", blank=True, null = True)
+    event_year = models.CharField(max_length = 10, default = "NULL", blank=True, null = True)
+    
    
     def __str__(self):
         return self.roll_no

@@ -9,6 +9,7 @@ import mimetypes
 from django.http import StreamingHttpResponse
 from wsgiref.util import FileWrapper
 import os
+import time
 
 
 from django.core.exceptions import ObjectDoesNotExist
@@ -39,7 +40,16 @@ def validate(request):
 
                 if str(i.role) == "student":
                     studentObj = StudentProfile.objects.get(roll_no = passWord)
-                    dic = {'name':studentObj.name, 'roll_no':studentObj.roll_no, 'role':studentObj.role,'gender':studentObj.gender,'branch':studentObj.branch,'CCET':studentObj.college}
+                    dic = {
+                        'name':studentObj.name,
+                        'roll_no':studentObj.roll_no,
+                        'role':studentObj.role,
+                        'gender':studentObj.gender,
+                        'branch':studentObj.branch,
+                        'CCET':studentObj.college,
+                        'event_type':studentObj.event_type,
+                        'event_year':studentObj.event_year
+                    }
                 else:
                     dic = {'role':str(i.role)}
             print(dic)
@@ -85,6 +95,8 @@ def register(request):
             dbObj.role = str(js["role"])
             dbObj.gender = str(js["gender"])
             dbObj.college = str(js["college"])
+            dbObj.event_type = str(js["event_type"])
+            dbObj.event_year = time.strftime("%Y")
             dbObj.save()
 
             loginObj.password =str(js["roll_no"])
