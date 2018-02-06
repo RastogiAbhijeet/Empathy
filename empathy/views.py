@@ -10,6 +10,7 @@ from django.http import StreamingHttpResponse
 from wsgiref.util import FileWrapper
 import os
 import time
+import random
 
 
 from django.core.exceptions import ObjectDoesNotExist
@@ -240,7 +241,10 @@ def sendMail(request):
     print(email)
     obj = EmailMessage("Athletic Meet Registeration","666666", to=[email])
     obj.send()
-    return HttpResponse("666666", content_type = "text/plain")
+
+    pin = random.randint(100000, 999999)
+
+    return HttpResponse(str(pin), content_type = "text/plain")
 
 @csrf_exempt
 def reportGeneration(request):
