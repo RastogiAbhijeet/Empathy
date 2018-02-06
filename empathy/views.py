@@ -109,6 +109,9 @@ def register(request):
         else :
             return HttpResponse("Can't find Roll No in the records", content_type = "text/plain")
 
+    except :
+        return HttpResponse("Please Update Your App or Try After sometime", content_type = "text/plain")
+
 def checkValidRollNo(roll):
     
     print("In Validation Shitt !! ")
