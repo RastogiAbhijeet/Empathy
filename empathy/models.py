@@ -22,7 +22,7 @@ class StudentProfile(models.Model):
     gender = models.CharField(max_length = 10, default = "xyz", blank=True, null = True)
     college = models.CharField(max_length = 10, default = "Default", blank=True, null = True)
     event_type = models.CharField(max_length = 10, default = "Athletic Meet", blank=True, null = True)
-    event_year = models.CharField(max_length = 10, default = "NULL", blank=True, null = True)
+    event_year = models.CharField(max_length = 10, default = "2018", blank=True, null = True)
     
    
     def __str__(self):
@@ -33,6 +33,7 @@ class EventTable(models.Model):
     roll_no = models.CharField(max_length = 10)
     position = models.CharField(max_length = 10, null = True, blank = True, default = "Not Played Yet")
     attribute = models.CharField(max_length = 40, null = True, blank = True)
+    event_type = models.CharField(max_length = 10, default = "Athletic Meet", blank=True, null = True)
 
 class RollNo(models.Model):
     roll_no = models.CharField(max_length = 8, primary_key = True)

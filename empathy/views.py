@@ -122,7 +122,6 @@ def checkValidRollNo(roll):
         print("Hello")
         return False
 
-        
 # Here's How we are going to send the PDF.
 def output_pdf(request):
     the_file = 'media\Monkey and banana problem.pdf'
@@ -142,36 +141,55 @@ def event_register(request):
     try:
         # print("Hello")
         js = json.loads(request.body.decode("utf-8"))
-        jsArray = js['event']
-        print(jsArray);
-        dbObj = EventTable.objects.filter(roll_no = str(js["roll_no"]))
 
-        list_registered = []
-        for x in dbObj:
-            list_registered.append(x)
-        
-        if len(dbObj)+len(jsArray) > 5:
-            response_str = "Already have registered for events"
-            for i in dbObj:
-                response_str = response_str + "   " +str(i.event)
+        if js['event_type'] == "Inter Year":
+            jsArray = js['event']
+            dbObj = EventTable.objects.filter(roll_no = str(js["roll_no"]))
+            
+            if(len(dbObj) < 8):
+                
+                for events in jsArray:
+                    db = EventTable()
+                    db.roll_no = str(js["roll_no"])
+                    db.event = events
+                    db.position = "Not Played"
+                    db.event_type = str(js['event_type'])
+                    db.save()
+                
+            else: 
+                response_str = "Already have registered for events"
+                for i in dbObj:
+                    response_str = response_str + "   " +str(i.event)
 
             return HttpResponse(response_str, content_type="text/plain")
-        else:
+
+        elif js['event_type'] == "Athletic Meet":
+            jsArray = js['event']
+            dbObj = EventTable.objects.filter(roll_no = str(js["roll_no"]))
+            list_registered = []
+            for x in dbObj:
+                list_registered.append(x)
             
-            for i in jsArray:
-                if i not in list_registered:
-                    db = EventTable()
-                    print(i)
-                    db.roll_no = js["roll_no"]
-                    db.event = i
-                    db.save()
+            if(len(dbObj) <= 5):
+                for i in jsArray:
+                    if i not in list_registered:
+                        db = EventTable()
+                        print(i)
+                        db.roll_no = js["roll_no"]
+                        db.event = i
+                        db.position = "Not Played"
+                        db.save()
+                response_str = "Check profile to see the registered Events"
+            else: 
+                response_str = "Already have registered for events"
+                for i in dbObj:
+                    response_str = response_str + "   " +str(i.event)
 
-            return HttpResponse("Check profile to see the registered Events", content_type="text/plain")
+                return HttpResponse(response_str, content_type="text/plain")
 
-    except Exception as e:
-        print(e)
-
-    return HttpResponse("Try Again after some time", content_type="text/plain")
+    except Exception as e: 
+        print(str(e))
+        return HttpResponse(str(e), content_type="text/plain")
     # Js Data : {"name":"abhijeet rastogi","roll_no", Event:["event1","event2, "event3", "event4", "event5"]}
 
 @csrf_exempt
@@ -182,12 +200,18 @@ def event_push(request):
 
         event_list = [x.event for x in db]
         position_list = [x.position for x in db]
+        event_type = [x.event_type for x in db]
 
-        print(event_list)
+        event_data = []
+        for i in range(0, len(event_list)):
+            event_data.append(str(event_list[i])+" | "+str(event_type[i]))
+
+
         print(position_list)
+        print(event_type)
 
 
-        dic = {"event":event_list, "position":position_list}
+        dic = {"event":event_data, "position":position_list}
         ls = [dic]
         responseText = str(ls)[1:-1]
 
