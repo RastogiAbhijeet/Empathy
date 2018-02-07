@@ -169,6 +169,7 @@ def event_register(request):
             for x in dbObj:
                 list_registered.append(x)
             
+            response_str = ""
             if(len(dbObj) <= 5):
                 for i in jsArray:
                     if i not in list_registered:
@@ -184,7 +185,7 @@ def event_register(request):
                 for i in dbObj:
                     response_str = response_str + "   " +str(i.event)
 
-                return HttpResponse(response_str, content_type="text/plain")
+            return HttpResponse(response_str, content_type="text/plain")
 
     except Exception as e: 
         print(str(e))
