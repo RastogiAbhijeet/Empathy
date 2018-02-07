@@ -96,7 +96,6 @@ def register(request):
             dbObj.role = str(js["role"])
             dbObj.gender = str(js["gender"])
             dbObj.college = str(js["college"])
-            dbObj.event_type = str(js["event_type"])
             dbObj.event_year = time.strftime("%Y")
             dbObj.save()
 
