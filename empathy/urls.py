@@ -5,7 +5,6 @@ app_name = 'empathy'
 
 urlpatterns = [
     url(r'^$', views.validate, name='validate'),    
-    url(r'^pdf_download/$', views.output_pdf, name='output_pdf'),
     url(r'^register/$', views.register,name="register"),
     url(r'^events/$', views.event_register,name="event_register"),
     url(r'^event_profile/$', views.event_push,name="event_push"),
@@ -15,4 +14,9 @@ urlpatterns = [
     url(r'^sendVerification/$', views.sendMail, name="sendMail"),
     url(r'^xls_generation/$', views.reportGeneration, name="reportGeneration"),
     url(r'^loadCsv/$', views.loadCsv, name="loadCsv"),
+    url(r'^noticeList/$', views.sendNoticeList, name="sendNoticeList"),
+    url(r'^downloadfile/$', views.output_file, name="outputfile"),
+    url(r'^certidownload/$', views.certificate_push, name="certificatePush"),
+    url(r'^infoDe/$', views.bulkReportGenerationAthleticMeet, name = "bulkReportGenerationAthleticMeet")
+    
 ]

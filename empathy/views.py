@@ -11,10 +11,10 @@ from wsgiref.util import FileWrapper
 import os
 import time
 import random
-
+from docx import Document
+from docx.shared import Pt
 
 from django.core.exceptions import ObjectDoesNotExist
-
 from django.core.mail import EmailMessage
 
 # Create your views here. 
@@ -122,17 +122,28 @@ def checkValidRollNo(roll):
         return False
 
 # Here's How we are going to send the PDF.
-def output_pdf(request):
-    the_file = 'media\Monkey and banana problem.pdf'
+@csrf_exempt
+def output_file(request):
+    file_name = request.body.decode('ascii')
+    path_to_notices = os.path.join(os.getcwd(), 'media/notices')
+    list_notices = os.listdir(path_to_notices)
     
-    with open(the_file,"rb") as f:
-        data = f.read()
+    if file_name in list_notices:
+        file_path = "media/notices/" + file_name;
+        print(file_path)
+    
+        with open(file_path,"rb") as f:
+            data = f.read()
 
-    response = HttpResponse(data, content_type = mimetypes.guess_type(the_file)[0])
-    response['Content-Disposition'] = "attachment;filename = 'Monkey and banana problem.pdf'"
-    response['Content-Length'] = os.path.getsize(the_file)
+        response = HttpResponse(data, content_type = mimetypes.guess_type(url = file_path)[0])
+        response['Content-Disposition'] = "attachment;filename = 'data'"
+        response['Content-Length'] = os.path.getsize(file_path)
+        response['File-Name'] = file_name
 
-    return response
+        return response
+    
+    else:
+        return HttpResponse("", content_type = "text/plain")
 
 @csrf_exempt
 def event_register(request):
@@ -168,6 +179,7 @@ def event_register(request):
             list_registered = []
             for x in dbObj:
                 list_registered.append(x)
+                
             
             response_str = ""
             if(len(dbObj) <= 5):
@@ -323,6 +335,7 @@ def reportGeneration(request):
 
 
 def loadCsv(request):
+    
     file = open("./media/CollegeCutList.csv", "r")
     reader = csv.reader(file)
     for i in reader:
@@ -333,3 +346,143 @@ def loadCsv(request):
         db.save()
     
     return HttpResponse("Data Successfully Loaded")
+
+# /noticeList
+@csrf_exempt
+def sendNoticeList(request):
+    print("Hello")
+    try:
+
+        path_to_notices = os.path.join(os.getcwd(), 'media/notices')
+        list_notices = os.listdir(path_to_notices)
+        result_dic = {"files":list_notices}
+        result_dic = [result_dic]        
+        result_dic = str(result_dic)[1:-1]
+
+        print("Sending Data : " + result_dic)
+
+        response = HttpResponse(result_dic, content_type = "text/plain")
+        response['file_name'] = "Hello"
+        return response
+    
+    except Exception as e:
+        print(e)
+        return HttpResponse("Hello", content_type = "text/plain")
+
+@csrf_exempt
+def certificate_push(request):
+    js = json.loads(request.body.decode('utf-8'))
+    
+    try:
+        os.mkdir("TempCertificate")
+    except FileExistsError:
+        pass
+    
+    generateDoc(str(js['roll_no']))
+
+    file_path = "TempCertificate/" + str(js['roll_no']) + ".docx";
+    
+    print(file_path)
+
+    with open(file_path,"rb") as f:
+        data = f.read()
+
+    response = HttpResponse(data, content_type = mimetypes.guess_type(url = file_path)[0])
+    response['Content-Disposition'] = "attachment;filename = 'data'"
+    response['Content-Length'] = os.path.getsize(file_path)
+    response['File-Name'] = str(js['roll_no']) + ".docx"
+
+    return response
+
+
+def generateDoc(roll):
+    
+    f = open("media/certificate/Atheletics Certificate Position 2017.docx",'rb')
+    document = Document(f)
+    style = document.styles
+
+    for i in range(len(document.paragraphs)):
+        
+        if("&NAME&" in document.paragraphs[i].text):
+            document.paragraphs[i].text = document.paragraphs[i].text.replace("&NAME&", "Abhijeet")
+            
+
+        if("&FATHER&" in document.paragraphs[i].text):
+            document.paragraphs[i].text = document.paragraphs[i].text.replace("&FATHER&", "Yatish")
+            
+        
+        if("&ROLL&" in document.paragraphs[i].text):
+            document.paragraphs[i].text = document.paragraphs[i].text.replace("&ROLL&", "Abhijeet")
+
+        if("&DEPT&" in document.paragraphs[i].text):
+            document.paragraphs[i].text = document.paragraphs[i].text.replace("&DEPT&", "Computer Science and Engineering")
+            
+        
+        if("&POSITION&" in document.paragraphs[i].text):
+            document.paragraphs[i].text = document.paragraphs[i].text.replace("&POSITION&", "Abhijeet")
+
+        if("&EVENT&" in document.paragraphs[i].text):
+            document.paragraphs[i].text = document.paragraphs[i].text.replace("&EVENT&", "Yatish")
+            
+        
+        if("&YEAR&" in document.paragraphs[i].text):
+            document.paragraphs[i].text = document.paragraphs[i].text.replace("&YEAR&", "Abhijeet")
+
+        if("&DATE&" in document.paragraphs[i].text):
+            document.paragraphs[i].text = document.paragraphs[i].text.replace("&DATE&", "Yatish")
+
+            # document.paragraphs[i].style = style['Body Text']
+            document.paragraphs[i].style.font.size = Pt(20)
+            document.paragraphs[i].style.font.name = 'Monotype Corsiva'
+            document.paragraphs[i].style.font.bold = True
+
+    file_name = str(roll)+".docx"
+    document.save("TempCertificate/"+file_name)
+
+def bulkReportGenerationAthleticMeet(request):
+    
+    ls = []
+    
+    db = StudentProfile.objects.filter()
+
+    for studentInstance in db:
+        dic = {}
+        dic["Name"] = studentInstance.name
+        dic["Roll"] = studentInstance.roll_no
+        dic["Semester"] = studentInstance.semester
+        dic["Branch"] = studentInstance.branch
+
+        temp_event_list = []
+        eventdb = EventTable.objects.filter(event_type = "Athletic Meet", roll_no = studentInstance.roll_no)
+        for eventInstance in eventdb:
+            temp_event_list.append(eventInstance.event)
+        
+        dic["Event"] = temp_event_list
+        ls.append(dic)
+    
+    hello_file = open("./media/Ehe.csv", 'w', newline="")
+    csvwriter = csv.writer(hello_file)
+
+    count = 0
+    for x in ls:
+        if count == 0:
+            
+            key = [v for v in x.keys()]
+            header = key
+            csvwriter.writerow(header)
+            count+=1
+
+        value = [v for v in x.values()]
+        csvwriter.writerow(value)
+
+    hello_file.close()
+
+    with open("./media/Ehe.csv", "rb") as f:
+        data = f.read()
+
+
+    response = HttpResponse(data, content_type =  mimetypes.guess_type(url = "./media/Ehe.csv")[0])
+    response['Content-Disposition'] = 'attachment; filename = "somefile.csv'
+
+    return response   
+            
