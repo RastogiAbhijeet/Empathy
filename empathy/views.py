@@ -336,7 +336,7 @@ def reportGeneration(request):
 
 def loadCsv(request):
     
-    file = open("./media/CollegeCutList.csv", "a")
+    file = open("./media/CollegeCutList.csv", "r")
     reader = csv.reader(file)
     for i in reader:
         db = RollNo()
