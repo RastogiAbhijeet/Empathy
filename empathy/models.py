@@ -11,7 +11,7 @@ class LoginTable(models.Model):
 
 class StudentProfile(models.Model):
     
-    roll_no = models.CharField(max_length = 10, primary_key=True)
+    roll_no = models.CharField(max_length = 20, primary_key=True)
     name = models.CharField(max_length = 100, default = "xyz", blank=True, null = True)
     branch = models.CharField(max_length = 5, default = "xyz", blank=True, null = True)
     semester = models.CharField(max_length = 4, default = "xyz", blank=True, null = True)
