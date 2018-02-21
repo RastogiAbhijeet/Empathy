@@ -454,6 +454,7 @@ def bulkReportGenerationAthleticMeet(request):
 
         temp_event_list = []
         eventdb = EventTable.objects.filter(event_type = "Athletic Meet", roll_no = studentInstance.roll_no, event = "Table tennis")
+        # print("Heelo")
         for eventInstance in eventdb:
             temp_event_list.append(eventInstance.event)
         
