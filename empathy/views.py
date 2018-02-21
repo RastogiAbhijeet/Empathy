@@ -336,13 +336,14 @@ def reportGeneration(request):
 
 def loadCsv(request):
     
-    file = open("./media/dipcsv.csv", "r")
+    file = open("./media/CollegeCutList.csv", "r")
     reader = csv.reader(file)
     for i in reader:
         db = RollNo()
         if(i[0] != 0):
             db.roll_no = i[0]
             db.name = i[1]
+            db.fatherName = i[2]
         db.save()
     
     return HttpResponse("Data Successfully Loaded")
@@ -378,7 +379,7 @@ def certificate_push(request):
     except FileExistsError:
         pass
     
-    generateDoc(str(js['roll_no']))
+    generateDoc(js)
 
     file_path = "TempCertificate/" + str(js['roll_no']) + ".docx";
     
@@ -395,7 +396,7 @@ def certificate_push(request):
     return response
 
 
-def generateDoc(roll):
+def generateDoc(jsObj):
     
     f = open("media/certificate/Atheletics Certificate Position 2017.docx",'rb')
     document = Document(f)
@@ -404,7 +405,7 @@ def generateDoc(roll):
     for i in range(len(document.paragraphs)):
         
         if("&NAME&" in document.paragraphs[i].text):
-            document.paragraphs[i].text = document.paragraphs[i].text.replace("&NAME&", "Abhijeet")
+            document.paragraphs[i].text = document.paragraphs[i].text.replace("&NAME&", jsObj['roll_no'])
             
 
         if("&FATHER&" in document.paragraphs[i].text):

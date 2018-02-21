@@ -23,6 +23,7 @@ class StudentProfile(models.Model):
     college = models.CharField(max_length = 10, default = "Default", blank=True, null = True)
     event_type = models.CharField(max_length = 10, default = "Athletic Meet", blank=True, null = True)
     event_year = models.CharField(max_length = 10, default = "2018", blank=True, null = True)
+
     
    
     def __str__(self):
@@ -38,6 +39,8 @@ class EventTable(models.Model):
 class RollNo(models.Model):
     roll_no = models.CharField(max_length = 8, primary_key = True)
     name = models.CharField(max_length = 300)
+    fatherName = models.CharField(max_length = 50, default = "NULL")
+    
         
 # Select * where event = "xyz" from StudentProfile -- This is the filter for Faculty Searching events
 
