@@ -458,8 +458,10 @@ def bulkReportGenerationAthleticMeet(request):
         for eventInstance in eventdb:
             temp_event_list.append(eventInstance.event)
         
-        dic["Event"] = temp_event_list
-        ls.append(dic)
+        if len(temp_event_list) != 0:
+            dic["Event"] = temp_event_list
+            ls.append(dic)
+     
     
     hello_file = open("./media/Ehe.csv", 'w', newline="")
     csvwriter = csv.writer(hello_file)
