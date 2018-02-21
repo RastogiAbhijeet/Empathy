@@ -336,7 +336,7 @@ def reportGeneration(request):
 
 def loadCsv(request):
     
-    file = open("./media/CollegeCutList.csv", "r")
+    file = open("./media/CollegeCutList.csv", "a")
     reader = csv.reader(file)
     for i in reader:
         db = RollNo()
@@ -455,7 +455,7 @@ def bulkReportGenerationAthleticMeet(request):
         dic["Mobile"] = studentInstance.mobile
 
         temp_event_list = []
-        eventdb = EventTable.objects.filter(event_type = "Inter Year", roll_no = studentInstance.roll_no, event = "Table tennis")
+        eventdb = EventTable.objects.filter(event_type = "Inter Year", roll_no = studentInstance.roll_no, event = "Football")
         # print("Heelo")
         for eventInstance in eventdb:
             temp_event_list.append(eventInstance.event)
