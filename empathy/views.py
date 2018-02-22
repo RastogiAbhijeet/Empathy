@@ -379,9 +379,29 @@ def certificate_push(request):
     except FileExistsError:
         pass
     
-    generateDoc(js)
+    certificate_dic = {}
 
-    file_path = "TempCertificate/" + str(js['roll_no']) + ".docx";
+    # db = StudentProfile.objects.filter
+    certificate_dic["roll_no"] = str(js['roll_no'])
+    certificate_dic["name"] = str(js['name'])
+    certificate_dic["event"] = str(js['event'])
+    certificate_dic["position"] = str(js['position'])
+    certificate_dic["branch"] = str(js['branch'])
+
+    
+    father = RollNo.objects.filter(roll_no = str(js['roll_no']).upper())
+
+    for i in father:
+        print(i.fatherName)
+        certificate_dic["fatherName"] = i.fatherName
+    certificate_dic["position"] = str(js['position'])
+
+
+    print(certificate_dic)
+    generateDoc(certificate_dic)
+
+    file_name = "certi" +".docx"
+    file_path = "TempCertificate/" +file_name;
     
     print(file_path)
 
@@ -391,7 +411,7 @@ def certificate_push(request):
     response = HttpResponse(data, content_type = mimetypes.guess_type(url = file_path)[0])
     response['Content-Disposition'] = "attachment;filename = 'data'"
     response['Content-Length'] = os.path.getsize(file_path)
-    response['File-Name'] = str(js['roll_no']) + ".docx"
+    response['File-Name'] = str(js['roll_no'])+str(js["event"]) + ".docx"
 
     return response
 
@@ -405,39 +425,52 @@ def generateDoc(jsObj):
     for i in range(len(document.paragraphs)):
         
         if("&NAME&" in document.paragraphs[i].text):
-            document.paragraphs[i].text = document.paragraphs[i].text.replace("&NAME&", jsObj['roll_no'])
+            document.paragraphs[i].text = document.paragraphs[i].text.replace("&NAME&", jsObj['name'])
             
 
         if("&FATHER&" in document.paragraphs[i].text):
-            document.paragraphs[i].text = document.paragraphs[i].text.replace("&FATHER&", "Yatish")
+            document.paragraphs[i].text = document.paragraphs[i].text.replace("&FATHER&", jsObj['fatherName'])
             
         
         if("&ROLL&" in document.paragraphs[i].text):
-            document.paragraphs[i].text = document.paragraphs[i].text.replace("&ROLL&", "Abhijeet")
+            document.paragraphs[i].text = document.paragraphs[i].text.replace("&ROLL&", jsObj["roll_no"])
 
         if("&DEPT&" in document.paragraphs[i].text):
-            document.paragraphs[i].text = document.paragraphs[i].text.replace("&DEPT&", "Computer Science and Engineering")
+            
+            if(jsObj["branch"] == "CSE"):
+                branch = "Computer Science and Engineering"
+            elif (jsObj["branch"] == "MECH") :
+                branch = "Mechanical Engineering"
+            elif (jsObj["branch"] == "ECE") :
+                branch = "Electronics and Communication Engineering"
+            elif (jsObj["branch"] == "CIVIL") :
+                branch = "Civil Engineering"
+            elif (jsObj["branch"] == "PROD") :
+                branch = "Production and Industrial Engineering"
+            elif (jsObj["branch"] == "ARCH") :
+                branch = "Architecture"
+            elif (jsObj["branch"] == "ELECT") :
+                branch = "Electrical  Engineering"
+           
+                
+
+            document.paragraphs[i].text = document.paragraphs[i].text.replace("&DEPT&",branch)
             
         
         if("&POSITION&" in document.paragraphs[i].text):
-            document.paragraphs[i].text = document.paragraphs[i].text.replace("&POSITION&", "Abhijeet")
+            document.paragraphs[i].text = document.paragraphs[i].text.replace("&POSITION&", jsObj["position"])
 
         if("&EVENT&" in document.paragraphs[i].text):
-            document.paragraphs[i].text = document.paragraphs[i].text.replace("&EVENT&", "Yatish")
-            
+            document.paragraphs[i].text = document.paragraphs[i].text.replace("&EVENT&", jsObj["event"])
         
-        if("&YEAR&" in document.paragraphs[i].text):
-            document.paragraphs[i].text = document.paragraphs[i].text.replace("&YEAR&", "Abhijeet")
-
-        if("&DATE&" in document.paragraphs[i].text):
-            document.paragraphs[i].text = document.paragraphs[i].text.replace("&DATE&", "Yatish")
 
             # document.paragraphs[i].style = style['Body Text']
             document.paragraphs[i].style.font.size = Pt(20)
             document.paragraphs[i].style.font.name = 'Monotype Corsiva'
             document.paragraphs[i].style.font.bold = True
 
-    file_name = str(roll)+".docx"
+   
+    file_name = "certi"+".docx"
     document.save("TempCertificate/"+file_name)
 
 def bulkReportGenerationAthleticMeet(request):
@@ -455,7 +488,7 @@ def bulkReportGenerationAthleticMeet(request):
         dic["Mobile"] = studentInstance.mobile
 
         temp_event_list = []
-        eventdb = EventTable.objects.filter(event_type = "Inter Year", roll_no = studentInstance.roll_no, event = "Football")
+        eventdb = EventTable.objects.filter(event_type = "Inter Year", roll_no = studentInstance.roll_no, event = "Chess")
         # print("Heelo")
         for eventInstance in eventdb:
             temp_event_list.append(eventInstance.event)
