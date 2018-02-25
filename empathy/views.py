@@ -488,12 +488,13 @@ def bulkReportGenerationAthleticMeet(request):
         dic["Semester"] = studentInstance.semester
         dic["Branch"] = studentInstance.branch
         dic["Mobile"] = studentInstance.mobile
+        dic["Wing"] = studentInstance.college
 
         temp_event_list = []
         eventdb = EventTable.objects.filter(event_type = "Athletic Meet", roll_no = studentInstance.roll_no)
         # print("Heelo")
         for eventInstance in eventdb:
-            dic["Event"] = temp_event_list
+            dic["Event"] = eventInstance.event
             ls.append(dic)
             
             # temp_event_list.append(eventInstance.event)
