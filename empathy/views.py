@@ -482,19 +482,21 @@ def bulkReportGenerationAthleticMeet(request):
     db = StudentProfile.objects.filter()
 
     for studentInstance in db:
-        dic = {}
-        dic["Name"] = studentInstance.name
-        dic["Roll"] = studentInstance.roll_no
-        dic["Semester"] = studentInstance.semester
-        dic["Branch"] = studentInstance.branch
-        dic["Mobile"] = studentInstance.mobile
-        dic["Wing"] = studentInstance.college
+        
 
         temp_event_list = []
         eventdb = EventTable.objects.filter(event_type = "Athletic Meet", roll_no = studentInstance.roll_no)
         # print("Heelo")
         for eventInstance in eventdb:
-            dic["Event"] = eventInstance
+            dic = {}
+            dic["Name"] = studentInstance.name
+            dic["Roll"] = studentInstance.roll_no
+            dic["Semester"] = studentInstance.semester
+            dic["Branch"] = studentInstance.branch
+            dic["Mobile"] = studentInstance.mobile
+            dic["Wing"] = studentInstance.college
+            dic["Event"] = eventInstance.event
+        
             ls.append(dic)
             
             # temp_event_list.append(eventInstance.event)
