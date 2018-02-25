@@ -493,11 +493,14 @@ def bulkReportGenerationAthleticMeet(request):
         eventdb = EventTable.objects.filter(event_type = "Athletic Meet", roll_no = studentInstance.roll_no)
         # print("Heelo")
         for eventInstance in eventdb:
-            temp_event_list.append(eventInstance.event)
-        
-        if len(temp_event_list) != 0:
             dic["Event"] = temp_event_list
             ls.append(dic)
+            
+            # temp_event_list.append(eventInstance.event)
+        
+        # if len(temp_event_list) != 0:
+        #     dic["Event"] = temp_event_list
+        #     ls.append(dic)
      
     
     hello_file = open("./media/Ehe.csv", 'w', newline="")
