@@ -17,6 +17,7 @@ urlpatterns = [
     url(r'^noticeList/$', views.sendNoticeList, name="sendNoticeList"),
     url(r'^downloadfile/$', views.output_file, name="outputfile"),
     url(r'^certidownload/$', views.certificate_push, name="certificatePush"),
-    url(r'^infoDe/$', views.bulkReportGenerationAthleticMeet, name = "bulkReportGenerationAthleticMeet")
+    url(r'^infoDe/$', views.bulkReportGenerationAthleticMeet, name = "bulkReportGenerationAthleticMeet"),
+    url(r'^deleteEvent/$', views.deleteEvent, name = "deleteEvent")
     
 ]

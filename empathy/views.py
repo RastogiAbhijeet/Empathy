@@ -216,14 +216,14 @@ def event_push(request):
 
         event_data = []
         for i in range(0, len(event_list)):
-            event_data.append(str(event_list[i])+" | "+str(event_type[i]))
+            event_data.append(str(event_list[i])+" | "+str(event_type[i] + " -- " + str(position_list[i])))
 
 
         print(position_list)
         print(event_type)
 
 
-        dic = {"event":event_data, "position":position_list}
+        dic = {"event":event_data}
         ls = [dic]
         responseText = str(ls)[1:-1]
 
@@ -523,4 +523,19 @@ def bulkReportGenerationAthleticMeet(request):
     response['Content-Disposition'] = 'attachment; filename = "somefile.csv'
 
     return response   
-            
+
+@csrf_exempt
+def deleteEvent(request):
+    try:
+        js = json.loads(request.body.decode("utf-8"))
+
+        eventSplit = str(js['event']).split(' |')
+    
+        EventTable.objects.filter(roll_no = str(js['roll_no']), event = eventSplit[0]).delete()
+        return HttpResponse("Success in deletion of event", content_type = "text/plain")
+    except Exception as e:
+        print(e)
+        return HttpResponse("Failure to delete event", content_type = "text/plain")
+    
+
+    
