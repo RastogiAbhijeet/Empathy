@@ -4,7 +4,8 @@ from . import views
 app_name = 'empathy'
 
 urlpatterns = [
-    url(r'^$', views.validate, name='validate'),    
+    url(r'^$', views.validate, name='validate'),   
+    url(r'^report$', views.report, name='report'),    
     url(r'^register/$', views.register,name="register"),
     url(r'^events/$', views.event_register,name="event_register"),
     url(r'^event_profile/$', views.event_push,name="event_push"),

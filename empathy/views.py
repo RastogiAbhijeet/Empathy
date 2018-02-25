@@ -473,8 +473,10 @@ def generateDoc(jsObj):
     file_name = "certi"+".docx"
     document.save("TempCertificate/"+file_name)
 
+
 def bulkReportGenerationAthleticMeet(request):
-    
+    x = request.body.decode("utf-8")
+    print(type(x))
     ls = []
     
     db = StudentProfile.objects.filter()
@@ -488,7 +490,7 @@ def bulkReportGenerationAthleticMeet(request):
         dic["Mobile"] = studentInstance.mobile
 
         temp_event_list = []
-        eventdb = EventTable.objects.filter(event_type = "Inter Year", roll_no = studentInstance.roll_no, event = "Chess")
+        eventdb = EventTable.objects.filter(event_type = "Athletic Meet", roll_no = studentInstance.roll_no)
         # print("Heelo")
         for eventInstance in eventdb:
             temp_event_list.append(eventInstance.event)
@@ -538,5 +540,5 @@ def deleteEvent(request):
         print(e)
         return HttpResponse("Failure to delete event", content_type = "text/plain")
     
-
-    
+def report(request):
+    return render(request, "empathy/filter.html")

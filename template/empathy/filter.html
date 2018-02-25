@@ -5,32 +5,28 @@
             <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
             <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
             <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+            <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+		    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.js"></script>
             <style type="text/css">
-                .centered{
-                    
-                    position: fixed;
-        
-                    
-                    transform: translate(-50%, -50%);
-
-                }
+                
             </style>
     </head>
         
 
     <body>
-        <div class = "container" align = "center" style = "margin-top : 20%;" >
-               
-            
+        <div ng-app = "myApp" ng-controller="myController" class = "container" align = "center" style = "margin-top : 20%;" >
+                 
             <div class = "row">
-                <span>Select Event</span>
+                <span>Select College Type</span>
+                <select class= "form-control" style = "width : 10%;"  ng-model = "collegeType">
+                    <option value= "Degree">Degree</option>
+                    <option value = "Diploma">Diploma</option>
+                </select>
             </div>
-                       
-            <select name="event_filter" id="event_filter">
-                <option value="event">event</option>
-            </select>
 
-            
+            <div class = "row" style = " margin : 5%;">
+                <button  class = "btn" ng-click = "getReport()">Get report</button>
+            </div>         
 
             
         </div>
@@ -38,7 +34,19 @@
     </body>
 
     <script type="text/javascript">
-        var app = angular
+        var app = angular.module("myApp", []);
+        
+        app.controller("myController", function($scope, $http){
+            console.log("HEllo");
+            var Ip = "http://192.168.178.35:8000"
+            $scope.getReport = function(){
+                data = {"college" : $scope.collegeType}
+                $http.post("/emp/infoDe/", data).then(function(response){
+                    alert("Success");
+                })
+            }
+        })
+
     </script>
 
 </html>
