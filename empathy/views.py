@@ -528,6 +528,7 @@ def bulkReportGenerationAthleticMeet(request):
 def deleteEvent(request):
     try:
         js = json.loads(request.body.decode("utf-8"))
+        print()
 
         eventSplit = str(js['event']).split(' |')
     
