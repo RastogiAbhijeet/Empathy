@@ -495,7 +495,9 @@ def bulkReportGenerationAthleticMeet(request):
             dic["Branch"] = studentInstance.branch
             dic["Mobile"] = studentInstance.mobile
             dic["Wing"] = studentInstance.college
+            dic["Gender"] = studentInstance.gender
             dic["Event"] = eventInstance.event
+            
         
             ls.append(dic)
             
